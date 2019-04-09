@@ -4,6 +4,6 @@ There are two modes:
 
 pacman mode : When the ball hits a boundary, it does a "pacman reflection," meaning it reapppears across the height if it hits a ceiling/floor, or across the width if it hits one of the walls 
 
-normal mode : The ball bounces according to the law of optics, with angles being preserved. This is the expected behavipr for energy conserving billiards.
+normal mode : The ball bounces according to the law of optics, with angles being preserved. This is the expected behavior for energy conserving billiards.
 
 The .pde file is a processing sketch which can be compiled, edited, and executed with the processing IDE
