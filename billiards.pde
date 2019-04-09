@@ -1,17 +1,17 @@
-int m = 400;
-int n = 400;
+int m = 200;
+int n = 200;
 int r = 10;
-int speedFactor = 0;
+int speedFactor;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
 ArrayList<Float[]> lineValues;
 int count;
-boolean firstPath, pacman, drawTriangle, drawInitialPoint;
+boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint;
 
 void setup(){
   frameRate(120);
   background(255);
-  size(1200, 800);
+  size(800, 800);
   
   // Initialize Paramaters
   initX = x = permInitX = longX = m/3;
@@ -23,11 +23,12 @@ void setup(){
   lineValues = new ArrayList<Float[]>();
   Float[] temp = {longX, longY, longX, longY};
   lineValues.add(temp);
-  speedFactor = 10;
+  speedFactor = 1;
   
   pacman = false;
   drawTriangle = false;
   drawInitialPoint = true;
+  drawIntersectionPoint = false;
 }
 
 
@@ -41,45 +42,7 @@ void draw(){
   //uncomment for flashy ball
   //fill((int) (255 * random(1)),(int) (255 * random(1)),(int)(255 * random(1)));
   
-  
-  //draw a black circle at the initial position with (x0, y0) text
-  if (drawInitialPoint) {
-    fill(0);
-    ellipse(permInitX,permInitY,r,r);
-    String startingPointString = "(x\u2080, y\u2080)";
-    textSize(25*((m/400.0) + (n/400.0))/2);
-    text(startingPointString, permInitX + 10*(m/400.0), permInitY + 30*(n/400.0));
-  }
-  
-  int w = (int) longvX;
-  int h = (int) longvY;
-  
-  
-  //draw right triangle between starting point square w,h (width/height)
-  if (drawTriangle) {
-    noFill();
-    line(permInitX, permInitY, permInitX + m*(w), permInitY);
-    rect(permInitX + m*(w), permInitY, -30, -30);
-    line(permInitX + m*(w), permInitY, permInitX + m*(w), permInitY - (h)*n);
-    // draw an angle
-    arc(permInitX, permInitY, 6*r, 6*r, -atan(longvY/longvX), 0);
-    text("θ", permInitX + 70*(m/400.0), permInitY -10*(n/400.0));
-  }
-  
-  //draw an ellipse of starting point in square w,h (width/height) and label it
-  fill(0,255,0);
-  strokeWeight(1);
-  ellipse(permInitX + (w)*m, permInitY - (h)*n, r, r);
-  String intersectionPointString;
-  if (w != 1 && h != 1)
-    intersectionPointString = "(x\u2080 +" + str(w) + "m, y\u2080 +" + str(h) + "n)";
-  else if(w != 1)
-    intersectionPointString = "(x\u2080 +" + str(w) + "m, y\u2080 + n)";
-  else
-    intersectionPointString = "(x\u2080 + m), y\u2080 +" + str(h) + "n)";
-    
-  fill(0);
-  text(intersectionPointString, permInitX + 20*(m/400.0) + (w)*m, permInitY + 20*(n/400.0) - (h)*n);
+  drawExtras();
   
   fill(255,133,85);
   
@@ -184,4 +147,51 @@ void createGrid() {
      line(0,i,width,i);
    }  
  
+}
+
+void drawExtras() {
+  
+  //draw a black circle at the initial position with (x0, y0) text
+  if (drawInitialPoint) {
+    fill(0);
+    ellipse(permInitX,permInitY,r,r);
+    String startingPointString = "(x\u2080, y\u2080)";
+    textSize(25*((m/400.0) + (n/400.0))/2);
+    text(startingPointString, permInitX + 10*(m/400.0), permInitY + 30*(n/400.0));
+  }
+  
+  int w = (int) longvX;
+  int h = (int) longvY;
+  
+  
+  //draw right triangle between starting point square w,h (width/height)
+  if (drawTriangle) {
+    noFill();
+    line(permInitX, permInitY, permInitX + m*(w), permInitY);
+    rect(permInitX + m*(w), permInitY, -30, -30);
+    line(permInitX + m*(w), permInitY, permInitX + m*(w), permInitY - (h)*n);
+    // draw an angle
+    arc(permInitX, permInitY, 6*r, 6*r, -atan(longvY/longvX), 0);
+    text("θ", permInitX + 70*(m/400.0), permInitY -10*(n/400.0));
+  }
+  
+  //draw an ellipse of starting point in a square w,h (width/height) away from the starting square and label the ellipse
+  if (drawIntersectionPoint){
+    fill(0,255,0);
+    strokeWeight(1);
+    ellipse(permInitX + (w)*m, permInitY - (h)*n, r, r);
+    String intersectionPointString;
+    if (w != 1 && h != 1)
+      intersectionPointString = "(x\u2080 +" + str(w) + "m, y\u2080 +" + str(h) + "n)";
+    else if(w != 1)
+      intersectionPointString = "(x\u2080 +" + str(w) + "m, y\u2080 + n)";
+    else if(h != 1)
+      intersectionPointString = "(x\u2080 + m, y\u2080 +" + str(h) + "n)";
+    else
+      intersectionPointString = "(x\u2080 + m, y\u2080 + n)";
+      
+    fill(0);
+    text(intersectionPointString, permInitX + 20*(m/400.0) + (w)*m, permInitY + 20*(n/400.0) - (h)*n);
+  } 
+  
 }
