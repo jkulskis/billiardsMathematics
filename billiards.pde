@@ -1,17 +1,18 @@
-int m = 200;
-int n = 200;
+int m = 100;
+int n = 100;
 int r = 10;
 int speedFactor;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
 ArrayList<Float[]> lineValues;
-int count;
-boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint;
+int count, clickedX, clickedY;
+boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder;
+int[] pathLengths = {2, 4};
 
 void setup(){
   frameRate(120);
   background(255);
-  size(800, 800);
+  size(900, 900);
   
   // Initialize Paramaters
   initX = x = permInitX = longX = m/3;
@@ -29,29 +30,127 @@ void setup(){
   drawTriangle = false;
   drawInitialPoint = true;
   drawIntersectionPoint = false;
+  pigeonhole = false;
+  
+  pathFinder = true;
 }
 
+void mouseClicked() {
+ 
+}
 
 void draw(){
-  
   background(244,251,211);
-  
-  createGrid();
-  drawLines();
   
   //uncomment for flashy ball
   //fill((int) (255 * random(1)),(int) (255 * random(1)),(int)(255 * random(1)));
   
-  drawExtras();
+  if (pigeonhole) {
+    createGrid();
+    split(5);
+  }
+  else if (pathFinder) {
+    
+    if (mousePressed) {
+      if (mouseY >= height/2 - n/2 && mouseY <= height/2 + n/2 && mouseX <= width/2 + m/2 && mouseX >= width/2 - m/2){
+        clickedX = mouseX;
+        clickedY = mouseY; 
+      }
+    }
   
-  fill(255,133,85);
-  
-  //draw the ball
-  strokeWeight(1);
-  ellipse(x,y,r,r);
-  for (int i = 0; i < speedFactor; i++){
-    move();
-    bounce();
+    createGrid();
+    fill(0);
+    stroke(0);
+    
+    if (clickedX == 0) {
+      clickedX = width/2;
+      clickedY = height/2;
+    }
+    
+    ellipse(clickedX, clickedY, r, r);
+    
+    int[] lastCoords = new int[4];
+    strokeWeight(5);
+    for (int i = 0; i < pathLengths.length; i++) {
+      for (int w = -pathLengths[i]; w <= pathLengths[i]; w++) {
+        int h = pathLengths[i] - abs(w);
+        if (abs(w) % 2 == 0) {
+          stroke(0);
+          fill(0);
+          if (w != -pathLengths[i]) {
+           line(clickedX + m*w, clickedY + n*h, clickedX + m*(w-2), clickedY + n*(pathLengths[i] - abs(w-2))); 
+           line(clickedX + m*w, clickedY - n*h, clickedX + m*(w-2), clickedY - n*(pathLengths[i] - abs(w-2))); 
+          }
+          ellipse(clickedX + m*w, clickedY + n*h, r, r);
+          ellipse(clickedX + m*w, clickedY - n*h, r, r);
+        }
+        else {
+          int flippedX = 0;
+          int flippedY = 0;
+          stroke(255, 0, 0);
+          fill(255, 0, 0);
+          if (w < 0) {
+            flippedX = width - clickedX;
+          }
+          else {
+            flippedX = width + m - clickedX;
+          }
+          if (h < 0) {
+            flippedY = clickedY;
+          }
+          else if (h != 0) {
+            flippedY = -n + clickedY;
+          }
+          else {
+            flippedY = clickedY;
+          }
+          if (w <= 0) {
+            ellipse(flippedX + m*(w), flippedY + n*(h+1), r, r);
+            ellipse(flippedX + m*(w), flippedY - n*(h-1), r, r);
+          }
+          else {
+            ellipse(flippedX + m*(w-1), flippedY + n*(h+1), r, r);
+            ellipse(flippedX + m*(w-1), flippedY - n*(h-1), r, r);
+          }
+          
+          if (w != -pathLengths[i] + 1) {
+            if (w <= 0) {
+              line(flippedX + m*(w), flippedY + n*(h+1), flippedX + m*(w-2), flippedY + n*(pathLengths[i] - abs(w-2) + 1)); 
+              line(flippedX + m*(w), flippedY - n*(h-1), flippedX + m*(w-2), flippedY - n*(pathLengths[i] - abs(w-2) - 1)); 
+            }
+            else {
+             line(flippedX + m*(w-1), flippedY + n*(h+1), flippedX + m*(w-3), flippedY + n*(pathLengths[i] - abs(w-2) + 1)); 
+             line(flippedX + m*(w-1), flippedY - n*(h-1), flippedX + m*(w-3), flippedY - n*(pathLengths[i] - abs(w-2) - 1));
+            }
+           
+          }
+          if (abs(w) == pathLengths[i] - 1 && w > 0){
+              line(flippedX + m*(w-1), flippedY + n*(h+1),flippedX + m*(w-1), flippedY + n*(h+1) - 2*n);
+              line(flippedX + m*(w-1), flippedY - n*(h-1),flippedX + m*(w-1), flippedY - n*(h-1) + 2*n);
+          }
+          if (abs(w) == pathLengths[i] - 1 && w <= 0){
+                line(flippedX + m*(w), flippedY + n*(h+1),flippedX + m*(w), flippedY + n*(h+1) - 2*n);
+                line(flippedX + m*(w), flippedY - n*(h-1),flippedX + m*(w), flippedY - n*(h-1) + 2*n);
+          }
+        }
+
+      }
+    }
+  }
+  else {
+    createGrid();
+    drawLines();
+    drawExtras();
+    
+    fill(255,133,85);
+    
+    //draw the ball
+    strokeWeight(1);
+    ellipse(x,y,r,r);
+    for (int i = 0; i < speedFactor; i++){
+      move();
+      bounce();
+    }
   }
 }
 
@@ -90,6 +189,18 @@ void bounce() {
     bounced = true;
   }
   trace(bounced);
+}
+
+void split(int numDivides) {
+  stroke(0);
+  for (int i = 0; i <= numDivides; i++) {
+     line(width/(pow(2, i)), height/(pow(2, i)), width/(pow(2, i)), 0);
+     line(width/(pow(2, i))*2, height/(pow(2, i)), 0, height/(pow(2, i)));
+     if (i == numDivides) {
+      fill(239, 196, 239);
+      rect(0, 0, width/(pow(2, i)), height/(pow(2, i)));
+     }
+  }
 }
 
 void trace(boolean bounced) {
