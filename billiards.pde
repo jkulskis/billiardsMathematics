@@ -1,18 +1,18 @@
-int m = 200;
-int n = 200;
+int m = 80;
+int n = 80;
 int r = 20;
 int speedFactor;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
 ArrayList<Float[]> lineValues;
 int count, clickedX, clickedY;
-boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder;
-int[] pathLengths = {2, 4};
+boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder, redPaths, blackPaths, middleLines, drawCenterLines;
+int[] pathLengths = {2, 4, 6};
 
 void setup(){
   frameRate(120);
   background(255);
-  size(1800, 1800);
+  size(880, 880);
   
   // Initialize Paramaters
   initX = x = permInitX = longX = m/3;
@@ -32,11 +32,10 @@ void setup(){
   drawIntersectionPoint = false;
   pigeonhole = false;
   
-  pathFinder = false;
-}
-
-void mouseClicked() {
-  
+  drawCenterLines = true;
+  pathFinder = true;
+  blackPaths = false;
+  redPaths = true;
 }
 
 void draw(){
@@ -72,15 +71,13 @@ void draw(){
       clickedX = width/2;
       clickedY = height/2;
     }
-    boolean drawCenterLines = true;
-    ellipse(clickedX, clickedY, r, r);
     
     int[] lastCoords = new int[4];
-    strokeWeight(8);
+    strokeWeight(6);
     for (int i = 0; i < pathLengths.length; i++) {
       for (int w = -pathLengths[i]; w <= pathLengths[i]; w++) {
         int h = pathLengths[i] - abs(w);
-        if (abs(w) % 2 == 0) {
+        if (abs(w) % 2 == 0 && blackPaths) {
           stroke(0);
           fill(0);
           if (w != -pathLengths[i]) {
@@ -94,7 +91,7 @@ void draw(){
             line(clickedX, clickedY, clickedX + m*w, clickedY - n*h);
           }
         }
-        else {
+        else if (abs(w) % 2 == 1 && redPaths){
           int flippedX = 0;
           int flippedY = 0;
           stroke(255, 0, 0);
@@ -152,6 +149,10 @@ void draw(){
 
       }
     }
+    // draw middle ellipse last so it is on top
+    fill(0,0,255);
+    strokeWeight(2);
+    ellipse(clickedX, clickedY, r, r);
   }
   else {
     createGrid();
