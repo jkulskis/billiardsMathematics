@@ -32,7 +32,7 @@ void setup(){
   drawIntersectionPoint = false;
   pigeonhole = false;
   
-  pathFinder = true;
+  pathFinder = false;
 }
 
 void mouseClicked() {
@@ -56,6 +56,12 @@ void draw(){
         clickedX = mouseX;
         clickedY = mouseY; 
       }
+      else if (mouseX <= width/2 + m/2 && mouseX >= width/2 - m/2) {
+        clickedX = mouseX;
+      }
+      else if (mouseY >= height/2 - n/2 && mouseY <= height/2 + n/2) {
+        clickedY = mouseY;
+      }
     }
   
     createGrid();
@@ -70,7 +76,7 @@ void draw(){
     ellipse(clickedX, clickedY, r, r);
     
     int[] lastCoords = new int[4];
-    strokeWeight(10);
+    strokeWeight(8);
     for (int i = 0; i < pathLengths.length; i++) {
       for (int w = -pathLengths[i]; w <= pathLengths[i]; w++) {
         int h = pathLengths[i] - abs(w);
@@ -83,6 +89,10 @@ void draw(){
           }
           ellipse(clickedX + m*w, clickedY + n*h, r, r);
           ellipse(clickedX + m*w, clickedY - n*h, r, r);
+          if (drawCenterLines) {
+            line(clickedX, clickedY, clickedX + m*w, clickedY + n*h);
+            line(clickedX, clickedY, clickedX + m*w, clickedY - n*h);
+          }
         }
         else {
           int flippedX = 0;
