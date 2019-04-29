@@ -1,6 +1,6 @@
-int m = 100;
-int n = 100;
-int r = 10;
+int m = 200;
+int n = 200;
+int r = 20;
 int speedFactor;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
@@ -12,7 +12,7 @@ int[] pathLengths = {2, 4};
 void setup(){
   frameRate(120);
   background(255);
-  size(900, 900);
+  size(1800, 1800);
   
   // Initialize Paramaters
   initX = x = permInitX = longX = m/3;
@@ -36,7 +36,7 @@ void setup(){
 }
 
 void mouseClicked() {
- 
+  
 }
 
 void draw(){
@@ -66,11 +66,11 @@ void draw(){
       clickedX = width/2;
       clickedY = height/2;
     }
-    
+    boolean drawCenterLines = true;
     ellipse(clickedX, clickedY, r, r);
     
     int[] lastCoords = new int[4];
-    strokeWeight(5);
+    strokeWeight(10);
     for (int i = 0; i < pathLengths.length; i++) {
       for (int w = -pathLengths[i]; w <= pathLengths[i]; w++) {
         int h = pathLengths[i] - abs(w);
@@ -96,41 +96,47 @@ void draw(){
             flippedX = width + m - clickedX;
           }
           if (h < 0) {
-            flippedY = clickedY;
+            flippedY = abs(height - clickedY);
           }
           else if (h != 0) {
-            flippedY = -n + clickedY;
+            flippedY = abs(height + n - clickedY);
           }
           else {
             flippedY = clickedY;
           }
           if (w <= 0) {
-            ellipse(flippedX + m*(w), flippedY + n*(h+1), r, r);
-            ellipse(flippedX + m*(w), flippedY - n*(h-1), r, r);
+            ellipse(flippedX + m*(w), flippedY - n*(h+1), r, r);
+            ellipse(flippedX + m*(w), flippedY + n*(h-1), r, r);
+            if (drawCenterLines) {
+              line(clickedX, clickedY, flippedX + m*(w), flippedY - n*(h+1));
+              line(clickedX, clickedY, flippedX + m*(w), flippedY + n*(h-1));
+            }
           }
           else {
-            ellipse(flippedX + m*(w-1), flippedY + n*(h+1), r, r);
-            ellipse(flippedX + m*(w-1), flippedY - n*(h-1), r, r);
+            ellipse(flippedX + m*(w-1), flippedY - n*(h+1), r, r);
+            ellipse(flippedX + m*(w-1), flippedY + n*(h-1), r, r);
+            if (drawCenterLines) {
+              line(clickedX, clickedY, flippedX + m*(w-1), flippedY - n*(h+1));
+              line(clickedX, clickedY, flippedX + m*(w-1), flippedY + n*(h-1));
+            }
           }
           
           if (w != -pathLengths[i] + 1) {
             if (w <= 0) {
-              line(flippedX + m*(w), flippedY + n*(h+1), flippedX + m*(w-2), flippedY + n*(pathLengths[i] - abs(w-2) + 1)); 
-              line(flippedX + m*(w), flippedY - n*(h-1), flippedX + m*(w-2), flippedY - n*(pathLengths[i] - abs(w-2) - 1)); 
+              line(flippedX + m*(w), flippedY - n*(h+1), flippedX + m*(w-2), flippedY - n*(pathLengths[i] - abs(w-2) + 1)); 
+              line(flippedX + m*(w), flippedY + n*(h-1), flippedX + m*(w-2), flippedY + n*(pathLengths[i] - abs(w-2) - 1)); 
             }
             else {
-             line(flippedX + m*(w-1), flippedY + n*(h+1), flippedX + m*(w-3), flippedY + n*(pathLengths[i] - abs(w-2) + 1)); 
-             line(flippedX + m*(w-1), flippedY - n*(h-1), flippedX + m*(w-3), flippedY - n*(pathLengths[i] - abs(w-2) - 1));
+             line(flippedX + m*(w-1), flippedY - n*(h+1), flippedX + m*(w-3), flippedY - n*(pathLengths[i] - abs(w-2) + 1)); 
+             line(flippedX + m*(w-1), flippedY + n*(h-1), flippedX + m*(w-3), flippedY + n*(pathLengths[i] - abs(w-2) - 1));
             }
            
           }
           if (abs(w) == pathLengths[i] - 1 && w > 0){
-              line(flippedX + m*(w-1), flippedY + n*(h+1),flippedX + m*(w-1), flippedY + n*(h+1) - 2*n);
-              line(flippedX + m*(w-1), flippedY - n*(h-1),flippedX + m*(w-1), flippedY - n*(h-1) + 2*n);
+            line(flippedX + m*(w-1), flippedY - n*(h-1),flippedX + m*(w-1), flippedY - n*(h-1) - 2*n);
           }
           if (abs(w) == pathLengths[i] - 1 && w <= 0){
-                line(flippedX + m*(w), flippedY + n*(h+1),flippedX + m*(w), flippedY + n*(h+1) - 2*n);
-                line(flippedX + m*(w), flippedY - n*(h-1),flippedX + m*(w), flippedY - n*(h-1) + 2*n);
+            line(flippedX + m*(w), flippedY - n*(h-1),flippedX + m*(w), flippedY - n*(h-1) - 2*n);
           }
         }
 
