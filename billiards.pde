@@ -1,13 +1,13 @@
-int m = 40;
-int n = 40;
-int r = 15;
+int m = 20;
+int n = 20;
+int r = 20;
 int speedFactor, strokeWeightValue;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
 ArrayList<Float[]> lineValues;
 int count, clickedX, clickedY;
 boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder, redPaths, blackPaths, middleLines, drawCenterLines, drawConnectLines;
-int[] pathLengths = {2, 4};
+int[] pathLengths = {2, 4,6,8,10,12,14,16,18};
 
 void setup(){
   frameRate(120);
@@ -35,10 +35,10 @@ void setup(){
   drawCenterLines = true;
   drawConnectLines = true;
   pathFinder = true;
-  blackPaths = false;
+  blackPaths = true;
   redPaths = true;
   
-  strokeWeightValue = 3;
+  strokeWeightValue = 5;
 }
 
 void draw(){
