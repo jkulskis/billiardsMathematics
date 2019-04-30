@@ -1,30 +1,30 @@
-int m = 900;
-int n = 900;
-int r = 50;
+int m = 40;
+int n = 40;
+int r = 15;
 int speedFactor, strokeWeightValue;
 float permInitX, permInitY, initX, initY, longX, longY, x, y;
 float vX, vY, longvX, longvY;
 ArrayList<Float[]> lineValues;
 int count, clickedX, clickedY;
-boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder, redPaths, blackPaths, middleLines, drawCenterLines;
+boolean firstPath, pacman, drawTriangle, drawInitialPoint, drawIntersectionPoint, pigeonhole, pathFinder, redPaths, blackPaths, middleLines, drawCenterLines, drawConnectLines;
 int[] pathLengths = {2, 4};
 
 void setup(){
   frameRate(120);
   background(255);
-  size(1800, 1800);
+  size(900, 900);
   
   // Initialize Paramaters
   initX = x = permInitX = longX = m/3;
   initY = y = longY = permInitY = height-n/2;
-  vX = longvX = (100.0/100);
+  vX = longvX = (200.0/100);
   vY = longvY = (100.0/100);
   
   // Initialize the line arraylist, and add a line for the continuing line in index 0
   lineValues = new ArrayList<Float[]>();
   Float[] temp = {longX, longY, longX, longY};
   lineValues.add(temp);
-  speedFactor = 2;
+  speedFactor = 1;
   
   pacman = true;
   drawTriangle = true;
@@ -33,11 +33,12 @@ void setup(){
   pigeonhole = false;
   
   drawCenterLines = true;
-  pathFinder = false;
+  drawConnectLines = true;
+  pathFinder = true;
   blackPaths = false;
   redPaths = true;
   
-  strokeWeightValue = 10;
+  strokeWeightValue = 3;
 }
 
 void draw(){
@@ -82,7 +83,7 @@ void draw(){
         if (abs(w) % 2 == 0 && blackPaths) {
           stroke(0);
           fill(0);
-          if (w != -pathLengths[i]) {
+          if (w != -pathLengths[i] && drawConnectLines) {
            line(clickedX + m*w, clickedY + n*h, clickedX + m*(w-2), clickedY + n*(pathLengths[i] - abs(w-2))); 
            line(clickedX + m*w, clickedY - n*h, clickedX + m*(w-2), clickedY - n*(pathLengths[i] - abs(w-2))); 
           }
@@ -131,21 +132,23 @@ void draw(){
           }
           
           if (w != -pathLengths[i] + 1) {
-            if (w <= 0) {
+            if (w <= 0 && drawConnectLines) {
               line(flippedX + m*(w), flippedY - n*(h+1), flippedX + m*(w-2), flippedY - n*(pathLengths[i] - abs(w-2) + 1)); 
               line(flippedX + m*(w), flippedY + n*(h-1), flippedX + m*(w-2), flippedY + n*(pathLengths[i] - abs(w-2) - 1)); 
             }
-            else {
+            else if (drawConnectLines) {
              line(flippedX + m*(w-1), flippedY - n*(h+1), flippedX + m*(w-3), flippedY - n*(pathLengths[i] - abs(w-2) + 1)); 
              line(flippedX + m*(w-1), flippedY + n*(h-1), flippedX + m*(w-3), flippedY + n*(pathLengths[i] - abs(w-2) - 1));
             }
            
           }
           if (abs(w) == pathLengths[i] - 1 && w > 0){
-            line(flippedX + m*(w-1), flippedY - n*(h-1),flippedX + m*(w-1), flippedY - n*(h-1) - 2*n);
+            if (drawConnectLines)
+              line(flippedX + m*(w-1), flippedY - n*(h-1),flippedX + m*(w-1), flippedY - n*(h-1) - 2*n);
           }
           if (abs(w) == pathLengths[i] - 1 && w <= 0){
-            line(flippedX + m*(w), flippedY - n*(h-1),flippedX + m*(w), flippedY - n*(h-1) - 2*n);
+            if (drawConnectLines)
+              line(flippedX + m*(w), flippedY - n*(h-1),flippedX + m*(w), flippedY - n*(h-1) - 2*n);
           }
         }
 
@@ -253,7 +256,7 @@ void drawLines() {
 }
 
 void createGrid() {
-   strokeWeight(2);
+   strokeWeight(strokeWeightValue);
    for (int i = 0; i <= width; i+=m) {
      if ((i / m) % 2 == 0) {
        // left is red
